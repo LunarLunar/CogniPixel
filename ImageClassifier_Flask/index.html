@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Classifier</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 500px;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .image-container {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #image-preview {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .results-container {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Classifier</h1>
+        <div class="image-container">
+            <img id="image-preview" src="" alt="Image preview">
+        </div>
+        <div class="results-container">
+            <p>Image: <span id="image-name"></span></p>
+            <p>Top 5 Predictions:</p>
+            <ul id="results-list">
+            </ul>
+        </div>
+        <div class="buttons-container">
+            <input type="file" id="file-input" accept="image/*" style="display: none;">
+            <button id="select-image-button">Select Image</button>
+            <button id="start-classification-button">Classify</button>
+        </div>
+    </div>
+    <script>
+        const imagePreview = document.getElementById('image-preview');
+        const imageName = document.getElementById('image-name');
+        const resultsList = document.getElementById('results-list');
+        const fileInput = document.getElementById('file-input');
+        const selectImageButton = document.getElementById('select-image-button');
+        const startClassificationButton = document.getElementById('start-classification-button');
+
+        selectImageButton.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+                imageName.textContent = file.name;
+                resultsList.innerHTML = ''; // Clear previous results
+            }
+        });
+
+        startClassificationButton.addEventListener('click', () => {
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select an image first.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            resultsList.innerHTML = '<li>Classifying...</li>';
+
+            fetch('http://127.0.0.1:5000/classify', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultsList.innerHTML = '';
+                if (data.results) {
+                    data.results.forEach(result => {
+                        const li = document.createElement('li');
+                        li.textContent = result;
+                        resultsList.appendChild(li);
+                    });
+                } else if (data.error) {
+                    const li = document.createElement('li');
+                    li.textContent = `Error: ${data.error}`;
+                    resultsList.appendChild(li);
+                }
+            })
+            .catch(error => {
+                resultsList.innerHTML = '';
+                const li = document.createElement('li');
+                li.textContent = `Error: ${error.message}`;
+                resultsList.appendChild(li);
+            });
+        });
+    </script>
+</body>
+</html>
