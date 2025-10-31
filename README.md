@@ -22,7 +22,22 @@ Here are some examples of the classifier in action:
 | :---: | :---: |
 | ![Bison in snow](images/pic_ICF_1.png) | ![Classification result for bison](images/pic_ICF_2.png) |
 
+### Prerequisites
+
+Before you begin, ensure you have the following installed on your system:
+
+- **Python 3.9+**: The programming language used to run the backend server. You can download it from [python.org](https://www.python.org/downloads/).
+- **Git**: The version control system used to clone the repository. You can download it from [git-scm.com](https://git-scm.com/downloads).
+
 ### How to Run
+
+#### Option A: One-Click Start (for Windows Users)
+
+1.  Navigate into the `CogniPixel/ImageClassifier_Flask` directory.
+2.  Simply **double-click the `start.bat` file**.
+3.  A command prompt window will appear, automatically install the necessary libraries, and then launch the application. A browser tab will open automatically.
+
+#### Option B: Manual Start (for macOS, Linux, and Advanced Users)
 
 1.  **Clone the Repository**: First, get the entire `CogniPixel` project collection on your local machine.
     ```bash
@@ -52,8 +67,6 @@ Here are some examples of the classifier in action:
     ```bash
     python app.py
     ```
-
-5.  **Use the Tool**: Simply select an image and click "Classify" to see the results.
 
 ### Educational Significance & AI Limitations
 

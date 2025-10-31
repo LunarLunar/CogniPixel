@@ -1,0 +1,13 @@
+# Gemini and Specify IDE folders
+.gemini/
+.specify/
+
+# Backup folder
+BAK/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment folder
+venv/
