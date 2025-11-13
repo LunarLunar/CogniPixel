@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 人物偵測器</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --background-color: #f8f9fa;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --highlight-color: #dc3545;
+            --box-color: #007bff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #main-container {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        #title {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        #upload-container {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            background-color: var(--background-color);
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        #upload-container.dragover {
+            background-color: #e9ecef;
+            border-color: var(--primary-color);
+        }
+        #image-input {
+            display: none;
+        }
+        #upload-label {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: var(--primary-color);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #upload-label:hover {
+            background-color: #0056b3;
+        }
+        #upload-label.disabled {
+            background-color: var(--secondary-color);
+            cursor: not-allowed;
+        }
+        #status-text {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: var(--secondary-color);
+            min-height: 1.5em;
+        }
+        #result-canvas {
+            display: none;
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="main-container">
+        <h1 id="title">AI 人物偵測器</h1>
+        <div id="upload-container">
+            <label for="image-input" id="upload-label" class="disabled">載入中...</label>
+            <p>或將圖片拖放到此處</p>
+        </div>
+        <input type="file" id="image-input" accept="image/*">
+        <p id="status-text">正在載入 AI 模型，請稍候...</p>
+        <canvas id="result-canvas"></canvas>
+    </div>
+
+    <!-- TensorFlow.js and COCO-SSD model -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@latest/dist/coco-ssd.min.js"></script>
+
+    <!-- Application Logic -->
+    <script>
+        const statusText = document.getElementById('status-text');
+        const imageInput = document.getElementById('image-input');
+        const uploadContainer = document.getElementById('upload-container');
+        const uploadLabel = document.getElementById('upload-label');
+        const canvas = document.getElementById('result-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let model = null;
+
+        async function main() {
+            // 1. Load the model
+            statusText.textContent = '正在載入 AI 模型，請稍候...';
+            try {
+                model = await cocoSsd.load();
+            } catch (e) {
+                statusText.textContent = '模型載入失敗，請刷新頁面重試。';
+                console.error(e);
+                return;
+            }
+            
+            // 2. Enable upload button
+            statusText.textContent = '請選擇或拖放一張圖片';
+            imageInput.disabled = false;
+            uploadLabel.classList.remove('disabled');
+            uploadLabel.textContent = '選擇圖片';
+
+            // 3. Add event listener for file input
+            imageInput.addEventListener('change', handleImage);
+            
+            // 4. Add Drag and Drop Event Listeners
+            uploadContainer.addEventListener('dragover', (e) => {
+                e.preventDefault(); // Prevent default behavior (e.g., opening file in new tab)
+                e.stopPropagation();
+                uploadContainer.classList.add('dragover'); // Add visual feedback
+            });
+
+            uploadContainer.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadContainer.classList.remove('dragover'); // Remove visual feedback
+            });
+
+            uploadContainer.addEventListener('drop', (e) => {
+                e.preventDefault(); // Prevent default behavior
+                e.stopPropagation();
+                uploadContainer.classList.remove('dragover'); // Remove visual feedback
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    // Simulate file input change event
+                    handleImage({ target: { files: files } });
+                }
+            });
+        }
+
+        function handleImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = e => {
+                detectAndDraw(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function detectAndDraw(imageDataUrl) {
+            statusText.textContent = '正在偵測中，請稍候...';
+            canvas.style.display = 'none';
+
+            const image = new Image();
+            image.src = imageDataUrl;
+
+            image.onload = async () => {
+                // Set canvas dimensions
+                canvas.width = image.width;
+                canvas.height = image.height;
+                ctx.drawImage(image, 0, 0);
+                canvas.style.display = 'block';
+
+                // Detect objects
+                const predictions = await model.detect(canvas);
+
+                // Filter for 'person'
+                const people = predictions.filter(p => p.class === 'person');
+
+                if (people.length === 0) {
+                    statusText.textContent = '未偵測到任何人物。';
+                    return;
+                }
+
+                statusText.textContent = `偵測完成！發現 ${people.length} 個人物。`;
+
+                // Find the largest person
+                let largestPerson = null;
+                let maxArea = 0;
+                people.forEach(person => {
+                    const area = person.bbox[2] * person.bbox[3];
+                    if (area > maxArea) {
+                        maxArea = area;
+                        largestPerson = person;
+                    }
+                });
+
+                // Draw bounding boxes
+                people.forEach(person => {
+                    const [x, y, width, height] = person.bbox;
+                    const scorePercentage = Math.round(person.score * 100);
+                    
+                    // Set style based on whether it's the largest person
+                    if (person === largestPerson) {
+                        ctx.strokeStyle = 'var(--highlight-color)';
+                        ctx.lineWidth = 4;
+                        ctx.fillStyle = 'var(--highlight-color)'; // For text background/fill
+                        
+                        // Draw the box
+                        ctx.strokeRect(x, y, width, height);
+
+                        // Draw a prominent marker (e.g., a triangle) for the largest person
+                        ctx.beginPath();
+                        ctx.moveTo(x + width / 2 - 10, y - 15);
+                        ctx.lineTo(x + width / 2 + 10, y - 15);
+                        ctx.lineTo(x + width / 2, y - 5);
+                        ctx.closePath();
+                        ctx.fill(); // Fill the triangle
+
+                        // Draw the label for the largest person
+                        const label = `主要人物 (${scorePercentage}%)`;
+                        ctx.font = 'bold 18px Arial';
+                        ctx.fillStyle = '#ffffff'; // White text on highlight color
+                        const textWidth = ctx.measureText(label).width;
+                        ctx.fillRect(x, y - 20, textWidth + 10, 25); // Background for text
+                        ctx.fillStyle = '#000000'; // Black text
+                        ctx.fillText(label, x + 5, y - 3);
+
+                    } else {
+                        ctx.strokeStyle = 'var(--box-color)';
+                        ctx.lineWidth = 2;
+                        ctx.fillStyle = 'var(--box-color)'; // For text
+                        
+                        // Draw the box
+                        ctx.strokeRect(x, y, width, height);
+
+                        // Draw only percentage for other people
+                        const label = `${scorePercentage}%`;
+                        ctx.font = '14px Arial';
+                        ctx.fillStyle = 'var(--box-color)'; // Text color same as box
+                        ctx.fillText(label, x + 5, y + 18); // Position inside the box
+                    }
+                });
+            };
+        }
+
+        // Start the application
+        main();
+    </script>
+</body>
+</html>

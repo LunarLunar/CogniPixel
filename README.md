@@ -7,6 +7,7 @@ Welcome to **CogniPixel**, a curated collection of applications and tools design
 ## Projects Collection
 
 1.  **[Image Classifier (Flask)](#1-image-classifier-flask)**: A web-based tool for classifying images using a pre-trained deep learning model.
+2.  **[Person Detector (TensorFlow.js)](#2-person-detector-tensorflowjs)**: A lightweight, serverless person detection tool running entirely in your browser. ([中文版本](#2-ai-人物偵測器-tensorflowjs))
 
 ---
 
@@ -105,3 +106,69 @@ The model was primarily trained on real-world photographs. It struggles when pre
 | ![Anime character's face](images/pic_ICF_4.png) | `Prediction: wig, mask, or other visual similarities` |
 
 By understanding these limitations, we learn to be better engineers: we learn to choose the right model for the right task and to be critical of the results AI produces.
+
+---
+
+## 2. AI 人物偵測器 (TensorFlow.js)
+
+### [English Version](#2-person-detector-tensorflowjs)
+
+![Demo](images/pic_person-detectorx1.png)
+
+### 專案簡介
+
+這是一個完全在使用者瀏覽器中運行的輕量級 AI 人物偵測工具。它不需要任何後端伺服器，只需一個 `index.html` 檔案即可運作。
+
+此專案的核心功能是利用 [TensorFlow.js](https://www.tensorflow.org/js) 和預訓練的 COCO-SSD 模型，對使用者上傳的圖片進行即時分析，標示出圖片中的所有人物，並特別高亮顯示視覺上最主要（距離最近，即邊界框面積最大）的人物。
+
+這個專案可以作為一個有趣的範例，展示如何賦予 AI 或其他自動化程式一雙簡單的「眼睛」，讓它們能夠感知環境中是否有人，並作出相應的互動，例如在偵測到人時觸發一個打招呼的動作。
+
+### 功能特色
+
+*   **純客戶端運行：** 無需伺服器，保護使用者隱私。
+*   **單檔案部署：** 所有程式碼都在一個 `index.html` 檔案中，極其輕便。
+*   **多人物偵測：** 可同時識別並框出圖片中的多個人物。
+*   **主要人物高亮：** 自動計算並高亮標示畫面中最主要的人物。
+*   **支援拖放與點擊上傳：** 提供友善的使用者體驗。
+
+### 如何使用
+
+這個專案的使用方法非常簡單：
+
+1.  **[點擊此處進行線上體驗](person-detector/index.html)**
+2.  或者，下載專案中的 `person-detector/index.html` 檔案。
+3.  直接在您的網頁瀏覽器（如 Chrome, Firefox, Edge）中打開這個檔案。
+4.  點擊「選擇圖片」按鈕或將圖片拖放到指定區域即可開始偵測。
+
+---
+
+## 2. Person Detector (TensorFlow.js)
+
+### [中文版本](#2-ai-人物偵測器-tensorflowjs)
+
+![Demo](images/pic_person-detectorx1.png)
+
+### Introduction
+
+This is a lightweight AI person detection tool that runs entirely in the user's browser. It requires no backend server and works with a single `index.html` file.
+
+The core function of this project is to use [TensorFlow.js](https://www.tensorflow.org/js) and the pre-trained COCO-SSD model to perform real-time analysis on user-uploaded images. It identifies all individuals in the image, draws bounding boxes around them, and specifically highlights the main person (visually closest, i.e., the one with the largest bounding box area).
+
+This project serves as an interesting example of how to give an AI or other automated programs a simple pair of "eyes," enabling them to perceive if a person is present and react accordingly, such as triggering a greeting action upon detection.
+
+### Features
+
+*   **Purely Client-Side:** No server required, ensuring user privacy.
+*   **Single-File Deployment:** All code is contained within a single `index.html` file, making it extremely portable.
+*   **Multi-Person Detection:** Capable of identifying and boxing multiple people in an image simultaneously.
+*   **Main Person Highlight:** Automatically calculates and highlights the most prominent person in the frame.
+*   **Drag-and-Drop & Click-to-Upload:** Provides a user-friendly experience.
+
+### How to Use
+
+Using this project is incredibly simple:
+
+1.  **[Click here for a live demo](person-detector/index.html)**
+2.  Alternatively, download the `person-detector/index.html` file from this repository.
+3.  Open the file directly in your web browser (e.g., Chrome, Firefox, Edge).
+4.  Click the "Select Image" button or drag and drop an image onto the designated area to start detection.
