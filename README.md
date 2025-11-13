@@ -112,7 +112,7 @@ By understanding these limitations, we learn to be better engineers: we learn to
 ## 2. AI 人物偵測器 (TensorFlow.js)
 
 ### [English Version](#2-person-detector-tensorflowjs)
-### [LIVE DEMO HERE](person-detector/index.html)
+### [LIVE DEMO HERE](https://lunarlunar.github.io/CogniPixel/person-detector/index.html)
 
 ![Demo](images/pic_person-detectorx1.png)
 
@@ -136,7 +136,7 @@ By understanding these limitations, we learn to be better engineers: we learn to
 
 這個專案的使用方法非常簡單：
 
-1.  **[點擊此處進行線上體驗](person-detector/index.html)**
+1.  **[點擊此處進行線上體驗](https://lunarlunar.github.io/CogniPixel/person-detector/index.html)**
 2.  或者，下載專案中的 `person-detector/index.html` 檔案。
 3.  直接在您的網頁瀏覽器（如 Chrome, Firefox, Edge）中打開這個檔案。
 4.  點擊「選擇圖片」按鈕或將圖片拖放到指定區域即可開始偵測。
@@ -146,7 +146,7 @@ By understanding these limitations, we learn to be better engineers: we learn to
 ## 2. Person Detector (TensorFlow.js)
 
 ### [中文版本](#2-ai-人物偵測器-tensorflowjs) 
-### [LIVE DEMO HERE](person-detector/index.html)
+### [LIVE DEMO HERE](https://lunarlunar.github.io/CogniPixel/person-detector/index.html)
 
 ![Demo](images/pic_person-detectorx1.png)
 
@@ -170,7 +170,7 @@ This project serves as an interesting example of how to give an AI or other auto
 
 Using this project is incredibly simple:
 
-1.  **[Click here for a live demo](person-detector/index.html)**
+1.  **[Click here for a live demo](https://lunarlunar.github.io/CogniPixel/person-detector/index.html)**
 2.  Alternatively, download the `person-detector/index.html` file from this repository.
 3.  Open the file directly in your web browser (e.g., Chrome, Firefox, Edge).
 4.  Click the "Select Image" button or drag and drop an image onto the designated area to start detection.
