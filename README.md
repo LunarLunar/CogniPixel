@@ -112,6 +112,7 @@ By understanding these limitations, we learn to be better engineers: we learn to
 ## 2. AI 人物偵測器 (TensorFlow.js)
 
 ### [English Version](#2-person-detector-tensorflowjs)
+### [LIVE DEMO HERE](person-detector/index.html)
 
 ![Demo](images/pic_person-detectorx1.png)
 
@@ -144,7 +145,8 @@ By understanding these limitations, we learn to be better engineers: we learn to
 
 ## 2. Person Detector (TensorFlow.js)
 
-### [中文版本](#2-ai-人物偵測器-tensorflowjs)
+### [中文版本](#2-ai-人物偵測器-tensorflowjs) 
+### [LIVE DEMO HERE](person-detector/index.html)
 
 ![Demo](images/pic_person-detectorx1.png)
 
